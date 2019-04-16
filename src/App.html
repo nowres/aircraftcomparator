@@ -1,0 +1,63 @@
+<h1>Aircraft comparator</h1>
+
+{#if list}
+    <List on:select="setOperand(event.operand, 0)" options={list}></List>
+
+    <List on:select="setOperand(event.operand, 1)" options={list}></List>
+{/if}
+
+<div>
+    {#if operands[0] && operands[0].name}
+        <Operand {...operands[0]} />
+    {/if}
+
+    {#if operands[1] && operands[1].name}
+        <Operand {...operands[1]} />
+    {/if}
+</div>
+
+<script>
+    import List from './List.html';
+    import Operand from './Operand.html';
+
+    export default {
+        oncreate() {
+            fetch('/data/list.json')
+                .then(response => {
+                  return response.json();
+                })
+                .then(json => {
+                    this.set({ list: json });
+                });
+        },
+        async onstate({changed, current, previous}) {
+            const { operands } = this.get();
+
+            // this fires before oncreate, and on every state change.
+            // the first time it runs, `previous` is undefined
+            if (changed.operands) {
+                for(let i = 0; i < operands.length; i++) {
+                    if (operands[i] && typeof operands[i] === 'string') {
+                        operands[i] = await fetch(`/data/${operands[i]}.json`)
+                                      .then(function (response) {
+                                          return response.json();
+                                      });
+                    }
+                }
+                this.set({ operands });
+            }
+        },
+        methods: {
+            setOperand(value, target) {
+                const { operands } = this.get();
+
+                operands[target] = value;
+                this.set({ operands });
+            }
+        },
+        components: {
+            List,
+            Operand
+        }
+    }
+</script>

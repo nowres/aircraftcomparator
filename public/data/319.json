@@ -1,0 +1,8 @@
+{
+  "name": "A319",
+  "family": "A320",
+  "dimensions": {
+    "length": 33.84,
+    "wingspan": 35.8
+  }
+}
