@@ -38,7 +38,6 @@
     afterUpdate(() => {
         // this fires before oncreate, and on every state change.
         // the first time it runs, `previous` is undefined
-        console.log(operands);
         if (operands) {
             for(let i = 0; i < operands.length; i++) {
                 if (operands[i] && typeof operands[i] === 'string') {
