@@ -1,4 +1,4 @@
-<select bind:value=operand>
+<select bind:value={operand}>
     <option value="">Select aircraft</option>
     {#each options as option}
         <option value="{option.c}">{option.v}</option>
@@ -6,15 +6,17 @@
 </select>
 
 <script>
-    export default {
-        oncreate() {
-            const { options } = this.get();
-        },
-        onstate({ changed }) {
-            const { operand } = this.get();
-            if (changed.operand && operand) {
-                this.fire('select', { operand });
-            }
+    import { afterUpdate, createEventDispatcher  } from 'svelte';
+
+    export let operand;
+    export let options;
+    export let number;
+
+    let eventDispatcher = createEventDispatcher();
+
+    afterUpdate(() => {
+        if (operand) {
+            eventDispatcher('select', { operand, number });
         }
-    };
+    });
 </script>
